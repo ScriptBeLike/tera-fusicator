@@ -2,443 +2,331 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TeraFusicator | Monochrome Edition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tera | Universal Lua Protection</title>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-main: #ffffff;
-            --bg-card: #ffffff;
+            --bg: #ffffff;
+            --surface: #f8f9fa;
             --border: #000000;
-            --accent: #000000;
-            --text-main: #000000;
+            --text: #000000;
             --text-dim: #666666;
             --font-ui: 'Outfit', sans-serif;
             --font-mono: 'JetBrains Mono', monospace;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
-            background-color: var(--bg-main);
-            color: var(--text-main);
+            background-color: var(--bg);
+            color: var(--text);
             font-family: var(--font-ui);
             height: 100vh;
             display: flex;
             flex-direction: column;
             overflow: hidden;
-            animation: fadeIn 0.5s ease-out;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        /* --- Header --- */
+        /* Header - Adaptive */
         header {
-            height: 70px;
-            background: #ffffff;
+            height: 60px;
+            min-height: 60px;
             border-bottom: 2px solid var(--border);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 40px;
+            padding: 0 15px;
+            background: #fff;
             z-index: 100;
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 800;
-            font-size: 1.8rem;
-            color: #000;
-            text-transform: uppercase;
-            letter-spacing: -1px;
+        .logo {
+            display: flex; align-items: center; gap: 8px;
+            font-weight: 800; font-size: 1.4rem; text-transform: uppercase;
         }
 
-        .logo-brackets {
-            font-family: var(--font-mono);
-            background: #000;
-            color: #fff;
-            padding: 4px 10px;
-            border-radius: 4px;
+        .logo-box {
+            font-family: var(--font-mono); background: #000; color: #fff;
+            padding: 2px 8px; border-radius: 4px; font-size: 1.2rem;
         }
 
-        /* --- Main Layout --- */
+        /* Layout - Responsive Grid */
         main {
-            display: flex;
+            display: grid;
+            grid-template-columns: 1fr 350px;
             flex: 1;
-            padding: 20px;
-            gap: 20px;
             overflow: hidden;
+            background: #eee;
+            gap: 2px; /* Border look */
         }
 
         .pane {
-            flex: 1;
             display: flex;
             flex-direction: column;
             background: #fff;
-            border: 2px solid var(--border);
-            border-radius: 0px; /* Sharp modern look */
             overflow: hidden;
+            position: relative;
         }
 
         .pane-header {
-            padding: 12px 20px;
-            border-bottom: 2px solid var(--border);
+            padding: 10px 15px;
+            background: #000;
+            color: #fff;
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: #000;
-            color: #fff;
         }
 
-        .pane-title {
-            font-size: 0.75rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* --- Editors --- */
+        /* Editor Styling */
         .editor-container {
             position: relative;
             flex: 1;
             overflow: hidden;
-            background: #fff;
         }
 
-        textarea, .highlight-layer {
+        textarea, .hl-layer {
             position: absolute;
             top: 0; left: 0; width: 100%; height: 100%;
-            padding: 20px;
+            padding: 15px;
             font-family: var(--font-mono);
             font-size: 13px;
-            line-height: 1.6;
+            line-height: 1.5;
             white-space: pre;
             overflow: auto;
             border: none;
             outline: none;
-        }
-
-        textarea {
-            background: transparent;
-            color: transparent;
-            caret-color: #000;
-            z-index: 2;
             resize: none;
         }
 
-        .highlight-layer {
-            background: #fff;
-            color: #000;
-            z-index: 1;
-            pointer-events: none;
-        }
+        textarea { background: transparent; color: transparent; caret-color: #000; z-index: 2; }
+        .hl-layer { background: #fff; color: #000; z-index: 1; pointer-events: none; }
 
-        /* Output Viewport */
         #outputArea {
             color: #000 !important;
-            background: #f0f0f0;
+            background: #f4f4f4;
             z-index: 3;
-            font-weight: 500;
-            text-shadow: none;
         }
 
-        /* --- Sidebar & Controls --- */
+        /* Sidebar Controls */
         .sidebar {
-            width: 380px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-        }
-
-        .card {
             background: #fff;
-            border: 2px solid var(--border);
-            padding: 20px;
+            border-left: 2px solid var(--border);
+            overflow-y: auto;
+            padding-bottom: 20px;
         }
 
+        .control-group { padding: 20px; }
         .control-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 8px 0;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
             font-size: 0.9rem;
             font-weight: 600;
-            border-bottom: 1px solid #eee;
         }
 
-        .control-row:last-child { border-bottom: none; }
+        /* Buttons & Switches */
+        .btn {
+            padding: 12px;
+            border: 2px solid #000;
+            font-weight: 800;
+            cursor: pointer;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: 0.2s;
+            background: #000;
+            color: #fff;
+            margin: 0 20px;
+        }
 
-        /* --- Switches (B&W) --- */
+        .btn:active { transform: scale(0.98); }
+        .btn-sec { background: #fff; color: #000; margin-top: 10px; }
+
         .switch {
-            position: relative;
-            display: inline-block;
-            width: 40px;
-            height: 20px;
+            position: relative; display: inline-block; width: 44px; height: 24px;
         }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #ccc;
-            transition: .2s;
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc; transition: .3s; border-radius: 24px;
         }
         .slider:before {
-            position: absolute;
-            content: "";
-            height: 14px; width: 14px;
-            left: 3px; bottom: 3px;
-            background-color: white;
-            transition: .2s;
+            position: absolute; content: ""; height: 18px; width: 18px;
+            left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%;
         }
         input:checked + .slider { background-color: #000; }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        /* --- Buttons --- */
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #000;
-            font-weight: 800;
-            font-size: 0.9rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            transition: all 0.2s;
-            text-transform: uppercase;
+        /* Mobile Specific Overrides */
+        @media (max-width: 850px) {
+            main {
+                grid-template-columns: 1fr;
+                grid-template-rows: 1fr 1fr;
+            }
+            .sidebar {
+                border-left: none;
+                border-top: 2px solid var(--border);
+                grid-row: 2;
+            }
+            header .logo { font-size: 1.1rem; }
+            .btn-nav-text { display: none; }
         }
 
-        .btn-primary {
-            background: #000;
-            color: #fff;
-        }
-
-        .btn-primary:hover {
-            background: #fff;
-            color: #000;
-        }
-
-        .btn-secondary {
-            background: #fff;
-            color: #000;
-            margin-top: 10px;
-        }
-
-        .btn-secondary:hover {
-            background: #000;
-            color: #fff;
-        }
-
-        /* --- Highlight Tokens (B&W High Contrast) --- */
-        .tk-kw { color: #000; font-weight: 800; text-decoration: underline; }
-        .tk-str { color: #444; font-style: italic; }
-        .tk-num { color: #000; font-weight: 700; border-bottom: 1px dotted #000; }
-        .tk-cmnt { color: #aaa; }
-        .tk-fn { color: #000; font-weight: 600; }
+        /* Tokens */
+        .tk-k { color: #000; font-weight: 800; text-decoration: underline; }
+        .tk-s { color: #555; font-style: italic; }
+        .tk-c { color: #aaa; }
 
         footer {
-            height: 40px;
+            height: 30px;
             background: #000;
             color: #fff;
-            padding: 0 40px;
+            font-size: 0.65rem;
             display: flex;
             align-items: center;
-            font-size: 0.7rem;
-            font-weight: 600;
-            gap: 24px;
+            padding: 0 15px;
+            justify-content: space-between;
         }
 
         #toast {
-            position: fixed;
-            bottom: 60px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #000;
-            color: #fff;
-            padding: 10px 20px;
-            font-weight: 800;
-            display: none;
-            z-index: 1000;
-            border: 2px solid #fff;
+            position: fixed; top: 70px; left: 50%; transform: translateX(-50%);
+            background: #000; color: #fff; border: 2px solid #fff;
+            padding: 8px 16px; font-weight: 800; font-size: 0.8rem;
+            display: none; z-index: 1000;
         }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo-container">
-            <span class="logo-brackets">{}</span>
+        <div class="logo">
+            <span class="logo-box">{}</span>
             Tera
         </div>
-        <div style="display: flex; gap: 10px;">
-            <button class="btn btn-secondary" style="width: auto; padding: 8px 15px;" onclick="location.reload()">
-                <i data-lucide="rotate-ccw" size="16"></i>
+        <div style="display: flex; gap: 8px;">
+            <button class="btn btn-sec" style="margin: 0; padding: 6px 12px;" onclick="location.reload()">
+                <i data-lucide="refresh-cw" size="16"></i>
             </button>
-            <button class="btn btn-primary" style="width: auto; padding: 8px 25px;" onclick="runTeraObfuscator()">
+            <button class="btn" style="margin: 0; padding: 6px 16px;" onclick="obfuscate()">
                 <i data-lucide="zap" size="18"></i>
-                Build Binary
+                <span class="btn-nav-text">Build Binary</span>
             </button>
         </div>
     </header>
 
     <main>
         <div class="pane">
-            <div class="pane-header">
-                <div class="pane-title">Lua Source</div>
-                <div id="lineCount" style="font-size: 0.65rem;">1 Lines</div>
-            </div>
+            <div class="pane-header">Source Input <span id="lCount">1 Lines</span></div>
             <div class="editor-container">
-                <div id="highlightLayer" class="highlight-layer"></div>
-                <textarea id="inputArea" spellcheck="false" placeholder="-- Input script here..." oninput="handleTextUpdate()"></textarea>
+                <div id="hlIn" class="hl-layer"></div>
+                <textarea id="inArea" spellcheck="false" placeholder="-- Paste Lua code..." oninput="sync()"></textarea>
             </div>
         </div>
 
         <div class="sidebar">
-            <div class="card">
-                <div class="pane-title" style="color: #000; margin-bottom: 15px; border-bottom: 2px solid #000; padding-bottom: 5px;">Security Matrix</div>
-                
-                <div class="control-row"><span>Custom VM</span><label class="switch"><input type="checkbox" id="vmMode" checked><span class="slider"></span></label></div>
-                <div class="control-row"><span>Flow Flattening</span><label class="switch"><input type="checkbox" id="cfFlatten" checked><span class="slider"></span></label></div>
-                <div class="control-row"><span>XOR String Enc</span><label class="switch"><input type="checkbox" id="binStrings" checked><span class="slider"></span></label></div>
-                <div class="control-row"><span>Honey Trap</span><label class="switch"><input type="checkbox" id="honeyCodes" checked><span class="slider"></span></label></div>
-                <div class="control-row"><span>Self Destruct</span><label class="switch"><input type="checkbox" id="selfDestruct" checked><span class="slider"></span></label></div>
-                <div class="control-row"><span>Junk Code</span><label class="switch"><input type="checkbox" id="junkSprawl" checked><span class="slider"></span></label></div>
+            <div class="control-group">
+                <div class="control-row"><span>Custom VM</span><label class="switch"><input type="checkbox" id="c_vm" checked><span class="slider"></span></label></div>
+                <div class="control-row"><span>XOR Strings</span><label class="switch"><input type="checkbox" id="c_xor" checked><span class="slider"></span></label></div>
+                <div class="control-row"><span>Anti-Tamper</span><label class="switch"><input type="checkbox" id="c_tamper" checked><span class="slider"></span></label></div>
+                <div class="control-row"><span>Junk Code</span><label class="switch"><input type="checkbox" id="c_junk" checked><span class="slider"></span></label></div>
             </div>
-
-            <div class="pane" style="flex: 1;">
-                <div class="pane-header">
-                    <div class="pane-title">Output Console</div>
-                </div>
-                <div class="editor-container">
-                    <textarea id="outputArea" readonly placeholder="Binary output will appear here..."></textarea>
-                </div>
-                <div style="padding: 10px; background: #fff; border-top: 2px solid #000;">
-                    <button class="btn btn-primary" onclick="copyOutput()">
-                        <i data-lucide="clipboard" size="16"></i>
-                        Copy Result
-                    </button>
-                </div>
+            
+            <div class="pane" style="height: 200px; border-top: 2px solid #000; border-bottom: 2px solid #000;">
+                <div class="pane-header">Output Console</div>
+                <textarea id="outArea" readonly placeholder="Binary output..."></textarea>
             </div>
+            
+            <button class="btn" style="margin-top: 15px;" onclick="copy()">
+                <i data-lucide="copy" size="18"></i> Copy Protected Script
+            </button>
         </div>
     </main>
 
     <footer>
-        <span>CORE-X SYSTEM ACTIVE</span>
-        <span id="perfStat" style="margin-left: auto;">Idle</span>
+        <span>CORE-X ULTRA</span>
+        <span id="stat">STATUS: READY</span>
     </footer>
 
-    <div id="toast">COPIED TO CLIPBOARD</div>
+    <div id="toast">COPIED!</div>
 
     <script>
         lucide.createIcons();
 
-        const input = document.getElementById('inputArea');
-        const output = document.getElementById('outputArea');
-        const highlight = document.getElementById('highlightLayer');
+        const inA = document.getElementById('inArea');
+        const outA = document.getElementById('outArea');
+        const hlI = document.getElementById('hlIn');
 
-        function handleTextUpdate() {
-            const code = input.value;
-            document.getElementById('lineCount').innerText = code.split('\n').length + " Lines";
-            
-            let html = code
-                .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-                .replace(/(--.*$)/gm, '<span class="tk-cmnt">$1</span>')
-                .replace(/(['"])(?:(?!\1|\\).|\\.)*\1/g, '<span class="tk-str">$&</span>')
-                .replace(/\b(local|function|if|then|else|elseif|end|for|while|do|repeat|until|return|break|in|and|or|not|true|false|nil|self)\b/g, '<span class="tk-kw">$1</span>')
-                .replace(/\b\d+\b/g, '<span class="tk-num">$&</span>')
-                .replace(/\b([a-zA-Z_]\w*)(?=\s*\()/g, '<span class="tk-fn">$1</span>');
-            
-            highlight.innerHTML = html + "\n";
-            highlight.scrollTop = input.scrollTop;
-            highlight.scrollLeft = input.scrollLeft;
+        function sync() {
+            const val = inA.value;
+            document.getElementById('lCount').innerText = val.split('\n').length + " Lines";
+            hlI.innerHTML = val.replace(/&/g, "&amp;").replace(/</g, "&lt;")
+                .replace(/(--.*$)/gm, '<span class="tk-c">$1</span>')
+                .replace(/(['"])(?:(?!\1|\\).|\\.)*\1/g, '<span class="tk-s">$&</span>')
+                .replace(/\b(local|function|if|then|else|end|for|while|return|and|or|not)\b/g, '<span class="tk-k">$1</span>') + "\n";
+            hlI.scrollTop = inA.scrollTop;
+            hlI.scrollLeft = inA.scrollLeft;
         }
 
-        input.addEventListener('scroll', () => {
-            highlight.scrollTop = input.scrollTop;
-            highlight.scrollLeft = input.scrollLeft;
+        inA.addEventListener('scroll', () => {
+            hlI.scrollTop = inA.scrollTop;
+            hlI.scrollLeft = inA.scrollLeft;
         });
 
-        // --- Core-X Logic (Fixed for execution) ---
-
-        function runTeraObfuscator() {
-            const start = performance.now();
-            let code = input.value;
+        function obfuscate() {
+            let code = inA.value;
             if(!code.trim()) return;
-
-            const opts = {
-                vm: document.getElementById('vmMode').checked,
-                cf: document.getElementById('cfFlatten').checked,
-                bin: document.getElementById('binStrings').checked,
-                honey: document.getElementById('honeyCodes').checked,
-                destruct: document.getElementById('selfDestruct').checked,
-                junk: document.getElementById('junkSprawl').checked
-            };
-
-            // 1. Better String XOR Encryption
-            if(opts.bin) {
-                code = code.replace(/(['"])(?:(?!\1|\\).|\\.)*\1/g, (s) => {
-                    const content = s.slice(1, -1);
-                    const key = 7;
-                    const encoded = content.split('').map(c => (c.charCodeAt(0) + key)).join(',');
-                    return `(function() local t={${encoded}} local r="" for _,v in pairs(t) do r=r..string.char(v-7) end return r end)()`;
+            
+            const start = performance.now();
+            
+            if(document.getElementById('c_xor').checked) {
+                code = code.replace(/(['"])(?:(?!\1|\\).|\\.)*\1/g, s => {
+                    const c = s.slice(1,-1);
+                    const enc = c.split('').map(x => x.charCodeAt(0) + 5).join(',');
+                    return `(function() local t={${enc}} local r="" for _,v in pairs(t) do r=r..string.char(v-5) end return r end)()`;
                 });
             }
 
-            // 2. Junk Sprawl
-            if(opts.junk) {
-                code = `local _0x${Math.random().toString(36).slice(2,7)} = function() return end; ` + code;
+            if(document.getElementById('c_junk').checked) {
+                code = `local _ = function() end; ` + code;
             }
 
-            // 3. Self Destruct / Env Check
-            if(opts.destruct) {
+            if(document.getElementById('c_tamper').checked) {
                 code = `if not game or not _G then return end; ` + code;
             }
 
-            // 4. Control Flow Flattening
-            if(opts.cf) {
-                const state = "_0x" + Math.random().toString(36).slice(2, 5);
-                code = `local ${state} = 0; while ${state} ~= -1 do if ${state} == 0 then ${code} ${state} = -1 end end`;
-            }
+            let wall = "";
+            for(let i=0; i<code.length; i++) wall += "\\" + code.charCodeAt(i);
 
-            // 5. Encoding Logic (The "Numeric Wall")
-            // We use \number format which is native to Lua strings
-            let escaped = "";
-            for (let i = 0; i < code.length; i++) {
-                escaped += "\\" + code.charCodeAt(i);
-            }
-
-            // Final Assembly
-            let finalScript = `--[[ Tera Core-X Protected ]]\n`;
-            if(opts.vm) {
-                // Robust VM Loader
-                finalScript += `local function _tera(s) return (loadstring or load)(s)() end; _tera("${escaped}")`;
+            let res = `--[[ Tera Core-X ]]\n`;
+            if(document.getElementById('c_vm').checked) {
+                res += `(loadstring or load)("${wall}")()`;
             } else {
-                finalScript += `(loadstring or load)("${escaped}")()`;
+                res += `loadstring("${wall}")()`;
             }
 
-            output.value = finalScript;
-            const end = performance.now();
-            document.getElementById('perfStat').innerText = `Finished: ${(end-start).toFixed(2)}ms`;
+            outA.value = res;
+            document.getElementById('stat').innerText = "DONE: " + (performance.now()-start).toFixed(1) + "ms";
         }
 
-        function copyOutput() {
-            if(!output.value) return;
-            output.select();
+        function copy() {
+            if(!outA.value) return;
+            outA.select();
             document.execCommand('copy');
-            const toast = document.getElementById('toast');
-            toast.style.display = 'block';
-            setTimeout(() => toast.style.display = 'none', 1500);
+            const t = document.getElementById('toast');
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 1500);
         }
-
-        handleTextUpdate();
     </script>
 </body>
 </html>
